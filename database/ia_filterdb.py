@@ -289,32 +289,40 @@ async def send_msg(bot, filename, caption):
         if await add_name(OWNERID, filename):
             imdb = await get_movie_details(filename)
 
-    rating = "N/A"
-    if imdb:
-        rating = imdb.get("rating", "N/A")
+           rating = "N/A"
+            if imdb:
+                rating = imdb.get("rating", "N/A")
 
-    text = (
-        f"\n\n🎬 Title: `{filename}`"
-        f"\n\n⭐ IMDb Rating: {rating}"
-        f"\n\n💿 Quality: {quality}"
-        f"\n\n🔊 Audio : {language}"
-    )
-
-    resized_poster = None
-
-    if imdb:
-        poster_url = imdb.get('poster_url')
-        if poster_url:
-            resized_poster = await fetch_image(poster_url) 
-
-            filenames = filename.replace(" ", '-')
-            btn = [[InlineKeyboardButton('🔰 𝐒𝐄𝐀𝐑𝐂𝐇 𝐇𝐄𝐑𝐄 🔰', url=f"https://t.me/+WtlAyRpidLExMDE1")]]
+            text = (
+                f"\n\n🎬 Title: `{filename}`"
+                f"\n\n⭐ IMDb Rating: {rating}"
+                f"\n\n💿 Quality: {quality}"
+                f"\n\n🔊 Audio : {language}"
+             )
             
-            if resized_poster:
-                await bot.send_photo(chat_id=DREAMCINEZONE_MOVIE_UPDATE_CHANNEL, photo=resized_poster, caption=text, reply_markup=InlineKeyboardMarkup(btn))
-            else:              
-                await bot.send_message(chat_id=DREAMCINEZONE_MOVIE_UPDATE_CHANNEL, text=text, reply_markup=InlineKeyboardMarkup(btn))
+            resized_poster = None
 
+            if imdb:
+                poster_url = imdb.get('poster_url')
+                if poster_url:
+                    resized_poster = await fetch_image(poster_url)
+
+           filenames = filename.replace(" ", "-")
+           btn = [[InlineKeyboardButton('🔰 SEARCH HERE 🔰', url="https://t.me/+WtlAyRpidLExMDE1")]]
+
+           if resized_poster:
+               await bot.send_photo(
+                   chat_id=DREAMCINEZONE_MOVIE_UPDATE_CHANNEL,
+                   photo=resized_poster,
+                   caption=text,
+                   reply_markup=InlineKeyboardMarkup(btn)
+             )
+         else:
+             await bot.send_message(
+                chat_id=DREAMCINEZONE_MOVIE_UPDATE_CHANNEL,
+                text=text,
+                reply_markup=InlineKeyboardMarkup(btn)
+            )
     except:
         pass
 
