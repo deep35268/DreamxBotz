@@ -42,7 +42,7 @@ ADMINS = [int(admin) if id_pattern.search(admin) else admin for admin in environ
 CHANNELS = [int(ch) if id_pattern.search(ch) else ch for ch in environ.get('CHANNELS', '-1002151783803').split()]  # Channel id for auto indexing (make sure bot is admin)
 LOG_CHANNEL = int(environ.get('LOG_CHANNEL', '-1002427494480'))  # Log channel id (make sure bot is admin)
 BIN_CHANNEL = int(environ.get('BIN_CHANNEL', '-1002160542554'))  # Bin channel id (make sure bot is admin)
-DREAMCINEZONE_MOVIE_UPDATE_CHANNEL = int(environ.get('DREAMCINEZONE_MOVIE_UPDATE_CHANNEL', '-1002677282300'))  # Notification of those who verify will be sent to your channel
+DREAMCINEZONE_MOVIE_UPDATE_CHANNEL = int(environ.get('DREAMCINEZONE_MOVIE_UPDATE_CHANNEL', '-1003752618894'))  # Notification of those who verify will be sent to your channel
 PREMIUM_LOGS = int(environ.get('PREMIUM_LOGS', '-1001970548842'))  # Premium logs channel id
 auth_channel = environ.get('AUTH_CHANNEL', '-1002151783803')  # Channel/Group ID for force sub (make sure bot is admin)
 DELETE_CHANNELS = [int(dch) if id_pattern.search(dch) else dch for dch in environ.get('DELETE_CHANNELS', '-1002479259622').split()]
@@ -65,6 +65,12 @@ DATABASE_URI = environ.get('DATABASE_URI', "mongodb+srv://pohoc46551:oJMYYvhZC3M
 DATABASE_URI2 = environ.get('DATABASE_URI2', "mongodb+srv://hhhkkkbbb:devils21@cluster0.xuqky.mongodb.net/?retryWrites=true&w=majority")
 DATABASE_NAME = environ.get('DATABASE_NAME', "cluster")
 COLLECTION_NAME = environ.get('COLLECTION_NAME', 'dreamcinezone_files')
+
+# ============================
+# 🔥 OMDB FIX (IMPORTANT)
+# ============================
+OMDB_API_KEY = environ.get('OMDB_API_KEY')  # ❌ default key remove
+IMDB = bool(OMDB_API_KEY)  # auto enable only if key exists
 
 # ============================
 # Movie Notification & Update Settings
@@ -116,7 +122,6 @@ PORT = environ.get("PORT", "8080")
 MSG_ALRT = environ.get('MSG_ALRT', 'Share & Support Us ♥️')
 SUPPORT_CHAT = environ.get('SUPPORT_CHAT', 'https://t.me/Ownersupport')  # Support group link (make sure bot is admin)
 P_TTI_SHOW_OFF = is_enabled((environ.get('P_TTI_SHOW_OFF', "False")), False)
-IMDB = is_enabled((environ.get('IMDB', "False")), False)
 AUTO_FFILTER = is_enabled((environ.get('AUTO_FFILTER', "True")), True)
 AUTO_DELETE = is_enabled((environ.get('AUTO_DELETE', "True")), True)
 DELETE_TIME = int(environ.get("DELETE_TIME", "300"))  #  deletion time in seconds (default: 5 minutes). Adjust as per your needs.
