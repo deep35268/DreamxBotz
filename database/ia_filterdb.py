@@ -308,7 +308,7 @@ async def send_msg(bot, filename, caption):
                     resized_poster = await fetch_image(poster_url)
 
             filenames = filename.replace(" ", "-")
-             btn = [[InlineKeyboardButton('🔰 SEARCH HERE 🔰', url="https://t.me/+WtlAyRpidLExMDE1")]]
+            btn = [[InlineKeyboardButton('🔰 SEARCH HERE 🔰', url="https://t.me/+WtlAyRpidLExMDE1")]]
 
             if resized_poster:
                await bot.send_photo(
@@ -334,9 +334,3 @@ async def get_qualities(text, qualities: list):
             quality.append(q)
     quality = ", ".join(quality)
     return quality[:-2] if quality.endswith(", ") else quality
-
-
-
-
-
-
