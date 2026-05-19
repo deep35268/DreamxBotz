@@ -289,7 +289,7 @@ async def send_msg(bot, filename, caption):
         if await add_name(OWNERID, filename):
             imdb = await get_movie_details(filename)
 
-           rating = "N/A"
+            rating = "N/A"
             if imdb:
                 rating = imdb.get("rating", "N/A")
 
@@ -307,17 +307,17 @@ async def send_msg(bot, filename, caption):
                 if poster_url:
                     resized_poster = await fetch_image(poster_url)
 
-           filenames = filename.replace(" ", "-")
-           btn = [[InlineKeyboardButton('🔰 SEARCH HERE 🔰', url="https://t.me/+WtlAyRpidLExMDE1")]]
+            filenames = filename.replace(" ", "-")
+             btn = [[InlineKeyboardButton('🔰 SEARCH HERE 🔰', url="https://t.me/+WtlAyRpidLExMDE1")]]
 
-           if resized_poster:
+            if resized_poster:
                await bot.send_photo(
                    chat_id=DREAMCINEZONE_MOVIE_UPDATE_CHANNEL,
                    photo=resized_poster,
                    caption=text,
                    reply_markup=InlineKeyboardMarkup(btn)
              )
-         else:
+            else:
              await bot.send_message(
                 chat_id=DREAMCINEZONE_MOVIE_UPDATE_CHANNEL,
                 text=text,
