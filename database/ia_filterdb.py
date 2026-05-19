@@ -285,6 +285,7 @@ async def send_msg(bot, filename, caption):
         language = language[:-2] if language else "Not idea 😄"
 
         filename = re.sub(r"[\(\)\[\]\{\}:;'\-!]", "", filename)
+       
         if await add_name(OWNERID, filename):
     imdb = await get_movie_details(filename)
 
