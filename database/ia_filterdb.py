@@ -285,18 +285,26 @@ async def send_msg(bot, filename, caption):
         language = language[:-2] if language else "Not idea 😄"
 
         filename = re.sub(r"[\(\)\[\]\{\}:;'\-!]", "", filename)
-
-        text = "\n\n🎬 𝖳𝗂𝗍𝗅𝖾: `{}`\n\n💿 𝖰𝗎𝖺𝗅𝗂𝗍𝗒: {}\n\n🔊 𝖠𝗎𝖽𝗂𝗈  : {}"
-        text = text.format(filename, quality, language)
-
         if await add_name(OWNERID, filename):
-            imdb = await get_movie_details(filename)  
-            resized_poster = None
+    imdb = await get_movie_details(filename)
 
-            if imdb:
-                poster_url = imdb.get('poster_url')
-                if poster_url:
-                    resized_poster = await fetch_image(poster_url)  
+    rating = "N/A"
+    if imdb:
+        rating = imdb.get("rating", "N/A")
+
+    text = (
+        f"\n\n🎬 Title: `{filename}`"
+        f"\n\n⭐ IMDb Rating: {rating}"
+        f"\n\n💿 Quality: {quality}"
+        f"\n\n🔊 Audio : {language}"
+    )
+
+    resized_poster = None
+
+    if imdb:
+        poster_url = imdb.get('poster_url')
+        if poster_url:
+            resized_poster = await fetch_image(poster_url) 
 
             filenames = filename.replace(" ", '-')
             btn = [[InlineKeyboardButton('🔰 𝐒𝐄𝐀𝐑𝐂𝐇 𝐇𝐄𝐑𝐄 🔰', url=f"https://t.me/+WtlAyRpidLExMDE1")]]
