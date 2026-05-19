@@ -98,10 +98,9 @@ async def save_file(bot, media):
       logger.warning(f'{getattr(media, "file_name", "NO_FILE")} is already saved in database')   
       return False, 0
     else:
-        logger.info(f'{getattr(media, "file_name", "NO_FILE")} is saved to database')
-          await send_msg(bot, file.file_name, file.caption)
-       if await get_status(bot.me.id):
-        return True, 1
+    logger.info(f'{getattr(media, "file_name", "NO_FILE")} is saved to database')
+    await send_msg(bot, file.file_name, file.caption)
+    return True, 1
 
 async def get_search_results(chat_id, query, file_type=None, max_results=10, offset=0, filter=False):
     """For given query return (results, next_offset)"""
