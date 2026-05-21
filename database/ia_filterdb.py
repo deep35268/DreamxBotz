@@ -287,8 +287,8 @@ async def send_msg(bot, filename, caption):
         filename = re.sub(r"[\(\)\[\]\{\}:;'\-!]", "", filename)
        
         if await add_name(OWNERID, filename):
-            imdb = await get_movie_details(filename)
-
+            clean_name = filename.replace("2022", "").strip()
+            imdb = await get_movie_details(clean_name)
             rating = "N/A"
             if imdb:
                 rating = imdb.get("rating", "N/A")
