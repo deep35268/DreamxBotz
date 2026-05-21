@@ -303,8 +303,8 @@ async def send_msg(bot, filename, caption):
             resized_poster = None
 
             if imdb:
-                poster_url = imdb.get('poster_url')
-                if poster_url:
+                poster_url = imdb.get("poster_url") or imdb.get("Poster")
+                if poster_url and poster_url != "N/A":
                     resized_poster = await fetch_image(poster_url)
 
             filenames = filename.replace(" ", "-")
