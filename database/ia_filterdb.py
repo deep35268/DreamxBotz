@@ -291,7 +291,7 @@ async def send_msg(bot, filename, caption):
             imdb = await get_movie_details(clean_name)
             rating = "N/A"
             if imdb:
-                rating = imdb.get("rating", "N/A")
+                rating = imdb.get("rating") or imdb.get("imdb_rating") or "N/A"
 
             text = (
                 f"🎬 {clean_name}\n\n"
@@ -313,6 +313,11 @@ async def send_msg(bot, filename, caption):
                     or imdb.get("poster")
                     or imdb.get("image")
                 )
+
+                print("POSTER URL =", poster_url)
+
+                if poster_url and poster_url != "N/A":
+                 resized_poster = await fetch_image(poster_url)
 
 
             filenames = filename.replace(" ", "-")
