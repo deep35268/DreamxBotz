@@ -3,7 +3,7 @@ import aiohttp
 import asyncio
 from io import BytesIO
 from PIL import Image
-from info import DREAMCINEZONE_IMAGE_FETCH
+from info import DEENDAYAL_IMAGE_FETCH
 from imdb import Cinemagoer
 
 
@@ -16,7 +16,7 @@ def list_to_str(lst):
     return ""
 
 async def fetch_image(url, size=(720, 720)):
-    if not DREAMCINEZONE_IMAGE_FETCH:
+    if not DEENDAYAL_IMAGE_FETCH:
         print("Image fetching is disabled.")
         return None
 
@@ -122,7 +122,7 @@ async def get_movie_details(query, id=False, file=None):
             'poster_url': poster_url,
             'plot': plot,
             'rating': str(movie.get("rating")),
-            'url': f'https://in.bookmyshow.com/title/tt{movieid}'
+            'url': f'https://www.imdb.com/title/tt{movieid}'
         }
 
     except Exception as e:
