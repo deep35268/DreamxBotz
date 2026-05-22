@@ -22,7 +22,7 @@ async def fetch_image(url, size=(720, 720)):
 
     try:
         async with aiohttp.ClientSession() as session:
-            async with session.get(url) as response:
+            async with session.get(url, timeout=15) as response:
                 if response.status == 200:
                     content = await response.read()
                     img = Image.open(BytesIO(content))
@@ -93,7 +93,11 @@ async def get_movie_details(query, id=False, file=None):
         if plot and len(plot) > 800:
             plot = plot[:800] + "..."
 
-        poster_url = movie.get('full-size cover url')
+        poster_url = (
+    movie.get('full-size cover url')
+    or movie.get('cover url')
+    or movie.get('cover')
+        )
 
         return {
             'title': movie.get('title'),
