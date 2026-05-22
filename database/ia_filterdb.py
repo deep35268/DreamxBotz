@@ -287,15 +287,20 @@ async def send_msg(bot, filename, caption):
         filename = re.sub(r"[\(\)\[\]\{\}:;'\-!]", "", filename)
        
         if await add_name(OWNERID, filename):
-            clean_name = filename.replace("2022", "").strip()
+            clean_name = re.sub(r"\b(19|20)\d{2}\b", "", filename).strip()
             imdb = await get_movie_details(clean_name)
             rating = "N/A"
             if imdb:
                 rating = imdb.get("rating") or imdb.get("imdb_rating") or "N/A"
+                imdb_url = imdb.get("url") or "N/A"
+            else:  
+                rating = "N/A"
+                imdb_url = "N/A"
 
             text = (
                 f"🎬 {clean_name}\n\n"
                 f"⭐ IMDb: {rating}\n\n"
+                f"🔗 IMDb Link: {imdb_url}\n\n"
                 f"📌 (Touch To Copy)\n\n"
                 f"➡ Audio Track:- 🔊 {language}\n\n"
                 f"Added ✅"
@@ -317,7 +322,7 @@ async def send_msg(bot, filename, caption):
                 print("POSTER URL =", poster_url)
 
                 if poster_url and poster_url != "N/A":
-                 resized_poster = await fetch_image(poster_url)
+                    resized_poster = await fetch_image(poster_url)
 
 
             filenames = filename.replace(" ", "-")
