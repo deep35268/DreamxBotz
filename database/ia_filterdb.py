@@ -294,11 +294,13 @@ async def send_msg(bot, filename, caption):
                 rating = imdb.get("rating", "N/A")
 
             text = (
-                f"\n\n🎬 Title: `{filename}`"
-                f"\n\n⭐ IMDb Rating: {rating}"
-                f"\n\n💿 Quality: {quality}"
-                f"\n\n🔊 Audio : {language}"
-             )
+                f"🎬 {clean_name}\n\n"
+                f"⭐ IMDb: {rating}\n\n"
+                f"📌 (Touch To Copy)\n\n"
+                f"➡ Audio Track:- 🔊 {language}\n\n"
+                f"Added ✅"
+            )
+
             
             resized_poster = None
 
