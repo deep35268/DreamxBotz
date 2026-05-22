@@ -305,9 +305,15 @@ async def send_msg(bot, filename, caption):
             resized_poster = None
 
             if imdb:
-                poster_url = imdb.get("poster_url") or imdb.get("Poster")
-                if poster_url and poster_url != "N/A":
-                    resized_poster = await fetch_image(poster_url)
+                print("IMDB DATA =", imdb)
+
+                poster_url = (
+                    imdb.get("poster_url")
+                    or imdb.get("Poster")
+                    or imdb.get("poster")
+                    or imdb.get("image")
+                )
+
 
             filenames = filename.replace(" ", "-")
             btn = [[InlineKeyboardButton('🔰 SEARCH HERE 🔰', url="https://t.me/+WtlAyRpidLExMDE1")]]
