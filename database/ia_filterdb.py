@@ -15,6 +15,7 @@ from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
+
 #---------------------------------------------------------
 # Some basic variables needed
 tempDict = {'indexDB': DATABASE_URI}
@@ -24,7 +25,7 @@ client = AsyncIOMotorClient(DATABASE_URI)
 db = client[DATABASE_NAME]
 instance = Instance.from_db(db)
 
-#secondary db
+# Secondary DB
 client2 = AsyncIOMotorClient(DATABASE_URI2)
 db2 = client2[DATABASE_NAME]
 instance2 = Instance.from_db(db2)
@@ -59,6 +60,7 @@ class Media2(Document):
         indexes = ('$file_name', )
         collection_name = COLLECTION_NAME
 
+
 async def choose_mediaDB():
     """This Function chooses which database to use based on the value of indexDB key in the dict tempDict."""
     global saveMedia
@@ -68,6 +70,7 @@ async def choose_mediaDB():
     else:
         logger.info("Using second db (Media2)")
         saveMedia = Media2
+
 
 async def save_file(bot, media):
     """Save file in database"""
@@ -108,7 +111,8 @@ async def save_file(bot, media):
             logger.info(f'{getattr(media, "file_name", "NO_FILE")} is saved to database')
             await send_msg(bot, file.file_name, file.caption)
             return True, 1
-        
+
+
 async def get_search_results(chat_id, query, file_type=None, max_results=10, offset=0, filter=False):
     """For given query return (results, next_offset)"""
     if chat_id is not None:
@@ -125,6 +129,7 @@ async def get_search_results(chat_id, query, file_type=None, max_results=10, off
                 max_results = 10
             else:
                 max_results = int(MAX_B_TN)
+
     query = query.strip()
     if not query:
         raw_pattern = '.'
@@ -146,11 +151,9 @@ async def get_search_results(chat_id, query, file_type=None, max_results=10, off
     if file_type:
         filter['file_type'] = file_type
 
-    total_results = ((await Media.count_documents(filter))+(await Media2.count_documents(filter)))
+    total_results = ((await Media.count_documents(filter)) + (await Media2.count_documents(filter)))
 
-    #verifies max_results is an even number or not
-    if max_results%2 != 0: 
-        logger.info(f"Since max_results is an odd number ({max_results}), bot will use {max_results+1} as max_results to make it even.")
+    if max_results % 2 != 0:
         max_results += 1
 
     cursor = Media.find(filter)
@@ -162,23 +165,23 @@ async def get_search_results(chat_id, query, file_type=None, max_results=10, off
     cursor2.skip(offset).limit(max_results)
 
     fileList2 = await cursor2.to_list(length=max_results)
-    if len(fileList2)<max_results:
-        next_offset = offset+len(fileList2)
-        cursorSkipper = (next_offset-(await Media2.count_documents(filter)))
-        cursor.skip(cursorSkipper if cursorSkipper>=0 else 0).limit(max_results-len(fileList2))
-        fileList1 = await cursor.to_list(length=(max_results-len(fileList2)))
-        files = fileList2+fileList1
+    if len(fileList2) < max_results:
+        next_offset = offset + len(fileList2)
+        cursorSkipper = (next_offset - (await Media2.count_documents(filter)))
+        cursor.skip(cursorSkipper if cursorSkipper >= 0 else 0).limit(max_results - len(fileList2))
+        fileList1 = await cursor.to_list(length=(max_results - len(fileList2)))
+        files = fileList2 + fileList1
         next_offset = next_offset + len(fileList1)
     else:
         files = fileList2
         next_offset = offset + max_results
+
     if next_offset >= total_results:
         next_offset = ''
     return files, next_offset, total_results
 
 
 async def get_bad_files(query, file_type=None, filter=False):
-    """For given query return (results, next_offset)"""
     query = query.strip()
     if not query:
         raw_pattern = '.'
@@ -206,11 +209,12 @@ async def get_bad_files(query, file_type=None, filter=False):
     cursor.sort('$natural', -1)
     cursor2.sort('$natural', -1)
 
-    files = ((await cursor2.to_list(length=(await Media2.count_documents(filter))))+(await cursor.to_list(length=(await Media.count_documents(filter)))))
+    files = ((await cursor2.to_list(length=(await Media2.count_documents(filter)))) + 
+             (await cursor.to_list(length=(await Media.count_documents(filter)))))
 
     total_results = len(files)
-
     return files, total_results
+
 
 async def get_file_details(query):
     filter = {'file_id': query}
@@ -225,7 +229,6 @@ async def get_file_details(query):
 def encode_file_id(s: bytes) -> str:
     r = b""
     n = 0
-
     for i in s + bytes([22]) + bytes([4]):
         if i == 0:
             n += 1
@@ -233,25 +236,19 @@ def encode_file_id(s: bytes) -> str:
             if n:
                 r += b"\x00" + bytes([n])
                 n = 0
-
             r += bytes([i])
-
     return base64.urlsafe_b64encode(r).decode().rstrip("=")
+
 
 def encode_file_ref(file_ref: bytes) -> str:
     return base64.urlsafe_b64encode(file_ref).decode().rstrip("=")
+
 
 def unpack_new_file_id(new_file_id):
     """Return file_id, file_ref"""
     decoded = FileId.decode(new_file_id)
     file_id = encode_file_id(
-        pack(
-            "<iiqq",
-            int(decoded.file_type),
-            decoded.dc_id,
-            decoded.media_id,
-            decoded.access_hash
-        )
+        pack("<iiqq", int(decoded.file_type), decoded.dc_id, decoded.media_id, decoded.access_hash)
     )
     file_ref = encode_file_ref(decoded.file_reference)
     return file_id, file_ref
@@ -289,13 +286,23 @@ async def send_msg(bot, filename, caption):
         if await add_name(OWNERID, filename):
             clean_name = re.sub(r"\b(19|20)\d{2}\b", "", filename).strip()
             imdb = await get_movie_details(clean_name)
+            
             rating = "N/A"
+            imdb_url = "N/A"
+            resized_poster = None
+
             if imdb:
                 rating = imdb.get("rating") or imdb.get("imdb_rating") or "N/A"
                 imdb_url = imdb.get("url") or "N/A"
-            else:  
-                rating = "N/A"
-                imdb_url = "N/A"
+
+                poster_url = (
+                    imdb.get("poster_url") or imdb.get("Poster") or 
+                    imdb.get("poster") or imdb.get("image")
+                )
+
+                if poster_url and poster_url != "N/A":
+                    # ⭐ ਰੇਟਿੰਗ ਵਾਲਾ ਪੋਸਟਰ ਬਣਾਓ
+                    resized_poster = await fetch_image(poster_url, rating=rating)
 
             text = (
                 f"🎬 {clean_name}\n\n"
@@ -306,43 +313,25 @@ async def send_msg(bot, filename, caption):
                 f"Added ✅"
             )
 
-            
-            resized_poster = None
-
-            if imdb:
-                print("IMDB DATA =", imdb)
-
-                poster_url = (
-                    imdb.get("poster_url")
-                    or imdb.get("Poster")
-                    or imdb.get("poster")
-                    or imdb.get("image")
-                )
-
-                print("POSTER URL =", poster_url)
-
-                if poster_url and poster_url != "N/A":
-                    resized_poster = await fetch_image(poster_url)
-
-
-            filenames = filename.replace(" ", "-")
             btn = [[InlineKeyboardButton('🔰 SEARCH HERE 🔰', url="https://t.me/+WtlAyRpidLExMDE1")]]
 
             if resized_poster:
-               await bot.send_photo(
-                   chat_id=DREAMCINEZONE_MOVIE_UPDATE_CHANNEL,
-                   photo=resized_poster,
-                   caption=text,
-                   reply_markup=InlineKeyboardMarkup(btn)
-             )
+                await bot.send_photo(
+                    chat_id=DREAMCINEZONE_MOVIE_UPDATE_CHANNEL,
+                    photo=resized_poster,
+                    caption=text,
+                    reply_markup=InlineKeyboardMarkup(btn)
+                )
             else:
-             await bot.send_message(
-                chat_id=DREAMCINEZONE_MOVIE_UPDATE_CHANNEL,
-                text=text,
-                reply_markup=InlineKeyboardMarkup(btn)
-            )
-    except:
+                await bot.send_message(
+                    chat_id=DREAMCINEZONE_MOVIE_UPDATE_CHANNEL,
+                    text=text,
+                    reply_markup=InlineKeyboardMarkup(btn)
+                )
+    except Exception as e:
+        logger.error(f"Send Msg Error: {e}")
         pass
+
 
 async def get_qualities(text, qualities: list):
     """Get all Quality from text"""
