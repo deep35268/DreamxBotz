@@ -8,7 +8,7 @@ logger = logging.getLogger(__name__)
 
 async def get_poster_with_rating(file_name):
     try:
-        # ਫਾਈਲ ਨਾਮ ਤੋਂ ਮੂਵੀ ਟਾਈਟਲ ਲੈਣਾ
+        # Clean movie title from filename
         movie_title = file_name.split(' - ')[0].split('[')[0].strip()
         if not movie_title or len(movie_title) < 3:
             return None, None
@@ -29,7 +29,7 @@ async def get_poster_with_rating(file_name):
         img = Image.open(BytesIO(img_data)).convert("RGB")
         draw = ImageDraw.Draw(img)
 
-        # ਫੌਂਟ ਲੋਡ ਕਰਨ ਦੀ ਕੋਸ਼ਿਸ਼
+        # Try to load font
         try:
             font = ImageFont.truetype("utils/fonts/arialbd.ttf", 55)
         except:
@@ -41,9 +41,10 @@ async def get_poster_with_rating(file_name):
         text = f"⭐ {rating}"
         text_width = draw.textlength(text, font=font)
         
-        # ਹੇਠਾਂ ਸੱਜੇ ਪਾਸੇ ਰੇਟਿੰਗ ਲਿਖੋ
+        # Bottom right position
         x = img.width - text_width - 30
         y = img.height - 90
+        
         draw.text((x, y), text, fill=(255, 215, 0), font=font, 
                  stroke_width=4, stroke_fill=(0, 0, 0))
 
