@@ -1,7 +1,7 @@
 from pyrogram import Client, filters
 from info import CHANNELS
 from database.ia_filterdb import save_file
-from utils.poster import get_poster_with_rating   # Poster with rating function
+from Imdbposter import get_movie_details, fetch_image   # Poster with rating function
 import logging
 
 logger = logging.getLogger(__name__)
